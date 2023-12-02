@@ -82,30 +82,25 @@ public class Day2 extends DayWrapper {
 		int blueMax = 14;
 
 		// count all invalid lines
-		int invalidSum = 0;
+		long powerSum = 0;
 		int gameCount = 1;
 		for (List<CubeCount> lineCount : cubeCount) {
-			boolean isInvalid = false;
+			int minRed = 0;
+			int minBlue = 0;
+			int minGreen = 0;
 
 			for (CubeCount singleCount : lineCount) {
-				if (singleCount.red > redMax) {
-					isInvalid = true;
-				}
-				if (singleCount.green > greenMax) {
-					isInvalid = true;
-				}
-				if (singleCount.blue > blueMax) {
-					isInvalid = true;
-				}
+				minBlue = Math.max(minBlue, singleCount.blue);
+				minRed = Math.max(minRed, singleCount.red);
+				minGreen = Math.max(minGreen, singleCount.green);
 			}
 
-			if (!isInvalid) {
-				invalidSum += gameCount;
-			}
+			long power = minRed * minBlue * minGreen;
+			powerSum += power;
 			gameCount++;
 		}
 
-		return invalidSum;
+		return powerSum;
 	}
 
 	@Override
