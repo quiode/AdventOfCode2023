@@ -37,18 +37,20 @@ public class Day3 extends DayWrapper {
 					if (i > 0) {
 						// check top
 						if (j > 0) {
-							// diagonal
-							if (characters.get(i - 1).get(j - 1) != '.') {
+							// left
+							if (characters.get(i - 1).get(j - 1) != '.'
+									&& !Character.isDigit(characters.get(i - 1).get(j - 1))) {
 								validNumber = true;
 							}
 						}
 						// on top
-						if (characters.get(i - 1).get(j) != '.') {
+						if (characters.get(i - 1).get(j) != '.' && !Character.isDigit(characters.get(i - 1).get(j))) {
 							validNumber = true;
 						}
 						// right
 						if (j < width - 1) {
-							if (characters.get(i - 1).get(j + 1) != '.') {
+							if (characters.get(i - 1).get(j + 1) != '.'
+									&& !Character.isDigit(characters.get(i - 1).get(j + 1))) {
 								validNumber = true;
 							}
 						}
@@ -56,18 +58,20 @@ public class Day3 extends DayWrapper {
 					if (i < characters.size() - 1) {
 						// check bottom
 						if (j > 0) {
-							// diagonal
-							if (characters.get(i + 1).get(j - 1) != '.') {
+							// left
+							if (characters.get(i + 1).get(j - 1) != '.'
+									&& !Character.isDigit(characters.get(i + 1).get(j - 1))) {
 								validNumber = true;
 							}
 						}
-						// on top
-						if (characters.get(i + 1).get(j) != '.') {
+						// below
+						if (characters.get(i + 1).get(j) != '.' && !Character.isDigit(characters.get(i + 1).get(j))) {
 							validNumber = true;
 						}
 						// right
 						if (j < width - 1) {
-							if (characters.get(i + 1).get(j + 1) != '.') {
+							if (characters.get(i + 1).get(j + 1) != '.'
+									&& !Character.isDigit(characters.get(i + 1).get(j + 1))) {
 								validNumber = true;
 							}
 						}
@@ -86,7 +90,6 @@ public class Day3 extends DayWrapper {
 					}
 				} else {
 					if (validNumber) {
-						System.out.println(currentNumber);
 						// add number
 						numberSum += Integer.valueOf(currentNumber);
 					}
@@ -95,6 +98,13 @@ public class Day3 extends DayWrapper {
 					validNumber = false;
 				}
 			}
+			if (validNumber) {
+				// add number
+				numberSum += Integer.valueOf(currentNumber);
+			}
+			// clear current number
+			currentNumber = "";
+			validNumber = false;
 		}
 
 		return numberSum;
