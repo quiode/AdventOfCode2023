@@ -1,8 +1,10 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class Day3 extends DayWrapper {
@@ -21,93 +23,78 @@ public class Day3 extends DayWrapper {
 			characters.add(charsList);
 		}
 
-		// calculate all numbers
+		int gearSum = 0;
 		int width = characters.get(0).size();
-		String currentNumber = "";
-		boolean validNumber = false;
-		int numberSum = 0;
-
+		// find all gears
 		for (int i = 0; i < characters.size(); i++) {
 			for (int j = 0; j < width; j++) {
-				Character currentCharacter = characters.get(i).get(j);
-				if (Character.isDigit(currentCharacter)) {
-					// add to current number
-					currentNumber += currentCharacter;
-					// check if any symbol is within reach
+				// check if character could be a gear
+				if (characters.get(i).get(j) == '*') {
+					// check if it has any two numbers adjacent
+					Set<Integer> adjacentNumbers = new HashSet<>();
+					// top number
 					if (i > 0) {
-						// check top
-						if (j > 0) {
-							// left
-							if (characters.get(i - 1).get(j - 1) != '.'
-									&& !Character.isDigit(characters.get(i - 1).get(j - 1))) {
-								validNumber = true;
-							}
+						if (j > 0 && Character.isDigit(characters.get(i - 1).get(j - 1))) {
+							adjacentNumbers.add(numberFromIndex(j - 1, characters.get(i - 1)));
 						}
-						// on top
-						if (characters.get(i - 1).get(j) != '.' && !Character.isDigit(characters.get(i - 1).get(j))) {
-							validNumber = true;
+						if (Character.isDigit(characters.get(i - 1).get(j))) {
+							adjacentNumbers.add(numberFromIndex(j, characters.get(i - 1)));
 						}
-						// right
-						if (j < width - 1) {
-							if (characters.get(i - 1).get(j + 1) != '.'
-									&& !Character.isDigit(characters.get(i - 1).get(j + 1))) {
-								validNumber = true;
-							}
+						if (j < width - 1 && Character.isDigit(characters.get(i - 1).get(j + 1))) {
+							adjacentNumbers.add(numberFromIndex(j + 1, characters.get(i - 1)));
 						}
 					}
-					if (i < characters.size() - 1) {
-						// check bottom
-						if (j > 0) {
-							// left
-							if (characters.get(i + 1).get(j - 1) != '.'
-									&& !Character.isDigit(characters.get(i + 1).get(j - 1))) {
-								validNumber = true;
-							}
-						}
-						// below
-						if (characters.get(i + 1).get(j) != '.' && !Character.isDigit(characters.get(i + 1).get(j))) {
-							validNumber = true;
-						}
-						// right
-						if (j < width - 1) {
-							if (characters.get(i + 1).get(j + 1) != '.'
-									&& !Character.isDigit(characters.get(i + 1).get(j + 1))) {
-								validNumber = true;
-							}
-						}
-					}
-					// check left
+					// left number
 					if (j > 0) {
-						if (characters.get(i).get(j - 1) != '.' && !Character.isDigit(characters.get(i).get(j - 1))) {
-							validNumber = true;
+						if (Character.isDigit(characters.get(i).get(j - 1))) {
+							adjacentNumbers.add(numberFromIndex(j - 1, characters.get(i)));
 						}
 					}
-					// check right
+					// bottom number
+					if (i < characters.size() - 1) {
+						if (j > 0 && Character.isDigit(characters.get(i + 1).get(j - 1))) {
+							adjacentNumbers.add(numberFromIndex(j - 1, characters.get(i + 1)));
+						}
+						if (Character.isDigit(characters.get(i + 1).get(j))) {
+							adjacentNumbers.add(numberFromIndex(j, characters.get(i + 1)));
+						}
+						if (j < width - 1 && Character.isDigit(characters.get(i + 1).get(j + 1))) {
+							adjacentNumbers.add(numberFromIndex(j + 1, characters.get(i + 1)));
+						}
+					}
+					// right number
 					if (j < width - 1) {
-						if (characters.get(i).get(j + 1) != '.' && !Character.isDigit(characters.get(i).get(j + 1))) {
-							validNumber = true;
+						if (Character.isDigit(characters.get(i).get(j + 1))) {
+							adjacentNumbers.add(numberFromIndex(j + 1, characters.get(i)));
 						}
 					}
-				} else {
-					if (validNumber) {
-						// add number
-						numberSum += Integer.valueOf(currentNumber);
+
+					if (adjacentNumbers.size() == 2) {
+						gearSum += adjacentNumbers.stream().reduce(1, (prev, cur) -> prev * cur);
 					}
-					// clear current number
-					currentNumber = "";
-					validNumber = false;
 				}
 			}
-			if (validNumber) {
-				// add number
-				numberSum += Integer.valueOf(currentNumber);
-			}
-			// clear current number
-			currentNumber = "";
-			validNumber = false;
 		}
 
-		return numberSum;
+		return gearSum;
+	}
+
+	int numberFromIndex(int j, List<Character> list) {
+		int startIndex = j;
+		int endIndex = j;
+		while (startIndex > 0 && Character.isDigit(list.get(startIndex - 1))) {
+			startIndex--;
+		}
+		while (endIndex < list.size() - 2 && Character.isDigit(list.get(endIndex + 1))) {
+			endIndex++;
+		}
+
+		String wholeNUmber = "";
+		for (int k = startIndex; k <= endIndex; k++) {
+			wholeNUmber += list.get(k);
+		}
+
+		return Integer.valueOf(wholeNUmber);
 	}
 
 	@Override
