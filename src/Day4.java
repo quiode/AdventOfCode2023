@@ -33,17 +33,6 @@ public class Day4 extends DayWrapper {
 			return count;
 		}
 
-		int cardPoints() {
-			int count = countMatchingNumbers();
-
-			if (count == 0) {
-				return 0;
-			} else {
-				count -= 1;
-				return 1 << count;
-			}
-		}
-
 		@Override
 		public String toString() {
 			return winningNumbers + ";" + ownNumbers;
@@ -73,13 +62,29 @@ public class Day4 extends DayWrapper {
 			cards.add(card);
 		}
 
-		int sum = 0;
-		// add all points
+		// how many times a card is used
+		int[] cardCount = new int[cards.size()];
+		// set all to one
+		for (int i = 0; i < cardCount.length; i++) {
+			cardCount[i] = 1;
+		}
+		// calculate all card counts
+		int i = 0;
 		for (Card card : cards) {
-			sum += card.cardPoints();
+			int cardMatches = card.countMatchingNumbers();
+			for (int j = i + 1; j <= cardMatches + i; j++) {
+				// add cardMatches * cardOccurence to all cards
+				cardCount[j] += cardCount[i];
+			}
+			i++;
+		}
+		// calculate total
+		int total = 0;
+		for (int count : cardCount) {
+			total += count;
 		}
 
-		return sum;
+		return total;
 	}
 
 	@Override
