@@ -5,34 +5,32 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 public class Day5 extends DayWrapper {
 	static class Range {
-		private final int destinationStart;
-		private final int sourceStart;
-		private final int length;
+		private final long destinationStart;
+		private final long sourceStart;
+		private final long length;
 
-		Range(int destinationStart, int sourceStart, int length) {
+		Range(long destinationStart, long sourceStart, long length) {
 			this.destinationStart = destinationStart;
 			this.sourceStart = sourceStart;
 			this.length = length;
 		}
 
-		boolean includes(int value) {
+		boolean includes(long value) {
 			if (value < sourceStart) {
 				return false;
-			}
-
-			if (value >= sourceStart + length) {
+			} else if (value >= sourceStart + length) {
 				return false;
+			} else {
+				return true;
 			}
-
-			return true;
 		}
 
-		int convertValue(int value) {
+		long convertValue(long value) {
 			if (!includes(value)) {
 				return -1;
 			}
 
-			int diff = value - sourceStart;
+			long diff = value - sourceStart;
 			return destinationStart + diff;
 		}
 
@@ -45,7 +43,7 @@ public class Day5 extends DayWrapper {
 	static class Map {
 		private final List<Range> ranges = new LinkedList<>();
 
-		int convertValue(int from) {
+		long convertValue(long from) {
 			// check if value is included in ranges
 			for (Range range : ranges) {
 				if (range.includes(from)) {
@@ -69,10 +67,10 @@ public class Day5 extends DayWrapper {
 	@Override
 	Object run(Scanner input) {
 		// read input
-		List<Integer> startingSeeds = new LinkedList<>();
+		List<Long> startingSeeds = new LinkedList<>();
 		input.skip("seeds:");
-		while (input.hasNextInt()) {
-			startingSeeds.add(input.nextInt());
+		while (input.hasNextLong()) {
+			startingSeeds.add(input.nextLong());
 		}
 
 		List<Map> maps = new LinkedList<>();
@@ -86,10 +84,10 @@ public class Day5 extends DayWrapper {
 			Map map = new Map();
 			// skip map title
 			// read lines
-			while (input.hasNextInt()) {
+			while (input.hasNextLong()) {
 				String line = input.nextLine();
 				Scanner lineScanner = new Scanner(line);
-				Range range = new Range(lineScanner.nextInt(), lineScanner.nextInt(), lineScanner.nextInt());
+				Range range = new Range(lineScanner.nextLong(), lineScanner.nextLong(), lineScanner.nextLong());
 				lineScanner.close();
 				map.addRange(range);
 			}
@@ -97,10 +95,10 @@ public class Day5 extends DayWrapper {
 		}
 
 		// go through all seeds
-		int min = Integer.MAX_VALUE;
-		for (Integer seed : startingSeeds) {
+		long min = Long.MAX_VALUE;
+		for (Long seed : startingSeeds) {
 			// follow the path to find the value
-			int current = seed;
+			long current = seed;
 			for (Map map : maps) {
 				current = map.convertValue(current);
 			}
